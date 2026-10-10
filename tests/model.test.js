@@ -8,6 +8,11 @@ const operating=model.simulate({V:24,Rc1:.4,Rc2:.5,fixed:nominal.fixed,rheostats
 for(const id of model.IDS)assert.ok(Math.abs(operating.currents[id]-currents[id])<1e-12,`corriente ${id}`);
 assert.ok(Math.abs(operating.It-3.9)<1e-12);
 assert.ok(Math.abs(operating.pError)<1e-10);
+const fieldCase={11:.196,12:.2,21:.046,22:.08};
+const fieldNominal=model.dimension({V:2.33,Rc1:.81,Rc2:1.24,currents:fieldCase});
+const fieldOperating=model.simulate({V:2.33,Rc1:.81,Rc2:1.24,fixed:fieldNominal.fixed,rheostats:{11:0,12:0,21:0,22:0}});
+assert.ok(Math.abs(fieldOperating.It-.522)<1e-12,"la corriente total del caso de campo debe ser 0,522 A");
+for(const id of model.IDS)assert.ok(Math.abs(fieldOperating.currents[id]-fieldCase[id])<1e-12,`caso de campo I${id}`);
 const editedFixed={...nominal.fixed,11:nominal.fixed[11]+5};
 const editedOperating=model.simulate({V:24,Rc1:.4,Rc2:.5,fixed:editedFixed,rheostats:{11:0,12:0,21:0,22:0}});
 assert.ok(editedOperating.currents["11"]<operating.currents["11"],"al editar R11 debe recalcularse I11");

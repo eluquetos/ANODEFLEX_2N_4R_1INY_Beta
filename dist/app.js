@@ -32,7 +32,7 @@ function computeFixed(force=false){
   catch(error){showMessage(error.message==="voltage-exhausted"?"Las caídas en los cables consumen la tensión disponible. Reduzca corrientes o resistencias de cable, o aumente el voltaje.":"No se pudo obtener un conjunto físico de resistencias.","error");return}
   const {It,I2,V1,V2,fixed}=result;
   state.fixed=fixed;state.nominal={V,Rc1,Rc2,curr,V1,V2,It,I2};
-  ids.forEach(id=>{$(`fixed-r${id}`).textContent=`${fmt(fixed[id],2)} Ω`;$(`system-r-${id}`).value=Number(fixed[id]).toFixed(2);$(`target-${id}`).value=curr[id]});
+  ids.forEach(id=>{$(`fixed-r${id}`).textContent=`${fmt(fixed[id],2)} Ω`;$(`system-r-${id}`).value=Number(fixed[id]).toFixed(2);$(`target-${id}`).value=curr[id];setRheostat(id,0)});
   $("fixed-nodes").textContent=`${fmt(V1,2)} / ${fmt(V2,2)} V`;$("live-v").value=V;
   localStorage.setItem("anodeflex-2-ramas-1iny-fixed",JSON.stringify({fixed,stateNominal:state.nominal}));
   showMessage("Resistencias calculadas y fijadas. Ya puede regular el voltaje y los reóstatos.","success");solve();
