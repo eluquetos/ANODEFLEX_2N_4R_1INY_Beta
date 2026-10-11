@@ -19,12 +19,12 @@
     const pCable=It*It*Rc1+I2*I2*Rc2,pBranches=sum(IDS.map(id=>currents[id]*currents[id]*branch[id])),pSource=V*It;
     return {V,Rc1,Rc2,rheostats:{...rheostats},branch,rp1,rp2,Rt,It,V1,V2,I2,currents,pCable,pBranches,pSource,pError:pSource-pCable-pBranches};
   }
-  function adjust({V,Rc1,Rc2,fixed,targets,maxReo}){
-    if(!IDS.every(id=>Number.isFinite(targets[id])&&targets[id]>0)||!Number.isFinite(maxReo)||maxReo<=0)throw new Error("invalid-target");
-    const It=sum(IDS.map(id=>targets[id])),I2=targets["21"]+targets["22"],V1=V-It*Rc1,V2=V1-I2*Rc2;
-    if(V1<=0||V2<=0)return {feasible:false,reason:"voltage",V1,V2};
-    const rheostats=Object.fromEntries(IDS.map(id=>[id,(id[0]==="1"?V1:V2)/targets[id]-fixed[id]])),negative=IDS.filter(id=>rheostats[id]<-1e-8),over=IDS.filter(id=>rheostats[id]>maxReo+1e-8);
-    return {feasible:negative.length===0&&over.length===0,V1,V2,rheostats,negative,over};
+  function adjust({Rc1,Rc2,fixed,targets,maxReo}){
+    if(!Number.isFinite(Rc1)||Rc1<0||!Number.isFinite(Rc2)||Rc2<0||!IDS.every(id=>Number.isFinite(targets[id])&&targets[id]>0&&Number.isFinite(fixed[id])&&fixed[id]>0)||!Number.isFinite(maxReo)||maxReo<=0)throw new Error("invalid-target");
+    const It=sum(IDS.map(id=>targets[id])),I2=targets["21"]+targets["22"],drop1=It*Rc1,drop2=drop1+I2*Rc2;
+    const V=Math.max(drop1+targets[11]*fixed[11],drop1+targets[12]*fixed[12],drop2+targets[21]*fixed[21],drop2+targets[22]*fixed[22]),V1=V-drop1,V2=V-drop2;
+    const rheostats=Object.fromEntries(IDS.map(id=>{const value=(id[0]==="1"?V1:V2)/targets[id]-fixed[id];return [id,Math.abs(value)<1e-8?0:value]})),negative=IDS.filter(id=>rheostats[id]<-1e-8),over=IDS.filter(id=>rheostats[id]>maxReo+1e-8),zero=IDS.filter(id=>rheostats[id]===0);
+    return {feasible:negative.length===0&&over.length===0,V,V1,V2,rheostats,negative,over,zero};
   }
   return {IDS,dimension,simulate,adjust};
 });

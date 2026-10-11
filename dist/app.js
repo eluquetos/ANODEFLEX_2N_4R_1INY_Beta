@@ -64,14 +64,13 @@ function setRheostat(id,value){$(`reo-${id}`).value=Math.round(Math.max(0,value)
 
 function assistedAdjustment(){
   if(!state.fixed){showMessage("Calibre primero las resistencias fijas.","error");return}
-  const targets=Object.fromEntries(ids.map(id=>[id,n(`target-${id}`)])),V=n("live-v"),maxReo=n("reo-max");
+  const targets=Object.fromEntries(ids.map(id=>[id,n(`target-${id}`)])),maxReo=n("reo-max");
   if(!Object.values(targets).every(value=>Number.isFinite(value)&&value>0)||!Number.isFinite(maxReo)||maxReo<=0){showMessage("Las cuatro corrientes objetivo y el reóstato máximo deben ser mayores que cero.","error");return}
   let result;
-  try{result=AnodeflexModel.adjust({V,Rc1:state.nominal.Rc1,Rc2:state.nominal.Rc2,fixed:state.fixed,targets,maxReo})}
+  try{result=AnodeflexModel.adjust({Rc1:state.nominal.Rc1,Rc2:state.nominal.Rc2,fixed:state.fixed,targets,maxReo})}
   catch{showMessage("No se pudo calcular el ajuste con los datos ingresados.","error");return}
-  if(result.reason==="voltage"){showMessage("Los objetivos consumen más tensión de la disponible considerando Rc1 y Rc2.","error");return}
   if(!result.feasible){const parts=[];if(result.negative.length)parts.push(`Ramas ${result.negative.join(", ")}: requieren reducir la resistencia fija o aumentar la tensión`);if(result.over.length)parts.push(`Ramas ${result.over.join(", ")}: superan el máximo de ${fmt(maxReo,2)} Ω`);showMessage(`Ajuste no alcanzable. ${parts.join(". ")}.`,"error");return}
-  ids.forEach(id=>setRheostat(id,result.rheostats[id]));solve();showMessage(`Ajuste calculado para V1=${fmt(result.V1,3)} V y V2=${fmt(result.V2,3)} V.`,"success");
+  $("live-v").value=result.V;ids.forEach(id=>setRheostat(id,result.rheostats[id]));solve();showMessage(`Ajuste calculado con la tensión mínima de ${fmt(result.V,2)} V. Reóstato en 0 Ω: ${result.zero.join(", ")}.`,"success");
 }
 
 function caseData(){return {format:"anodeflex-pc-case",version:1,createdAt:new Date().toISOString(),calibration:{V:state.nominal.V,Rc1:state.nominal.Rc1,Rc2:state.nominal.Rc2,currents:state.nominal.curr,fixed:state.fixed},operation:{V:n("live-v"),targets:Object.fromEntries(ids.map(id=>[id,n(`target-${id}`)])),rheostats:Object.fromEntries(ids.map(id=>[id,n(`reo-${id}`)])),rheostatMax:n("reo-max"),tolerancePercent:n("tolerance")},results:state.op}}
@@ -91,7 +90,7 @@ function wireEvents(){
   $("reset-rheostats").addEventListener("click",()=>{ids.forEach(id=>setRheostat(id,0));solve()});$("assist").addEventListener("click",assistedAdjustment);$("tolerance").addEventListener("input",solve);$("save-case").addEventListener("click",saveCase);$("load-case").addEventListener("click",()=>$("case-file").click());$("case-file").addEventListener("change",event=>{if(event.target.files[0])loadCase(event.target.files[0]);event.target.value=""});$("print-report").addEventListener("click",()=>window.print());
 }
 
-function restore(){try{const saved=JSON.parse(localStorage.getItem("anodeflex-2-ramas-1iny-fixed")||localStorage.getItem("anodeflex-fixed"));if(saved?.fixed&&saved?.stateNominal){state.fixed=saved.fixed;state.nominal=saved.stateNominal;ids.forEach(id=>{$(`fixed-r${id}`).textContent=`${fmt(state.fixed[id],2)} Ω`;$(`system-r-${id}`).value=Number(state.fixed[id]).toFixed(2)});$("fixed-nodes").textContent=`${fmt(state.nominal.V1,2)} / ${fmt(state.nominal.V2,2)} V`;localStorage.setItem("anodeflex-2-ramas-1iny-fixed",JSON.stringify({fixed:state.fixed,stateNominal:state.nominal}));solve();return}}catch{}computeFixed(true)}
+function restore(){try{const saved=JSON.parse(localStorage.getItem("anodeflex-2-ramas-1iny-fixed")||localStorage.getItem("anodeflex-fixed"));if(saved?.fixed&&saved?.stateNominal){state.fixed=saved.fixed;state.nominal=saved.stateNominal;$("nom-v").value=state.nominal.V;$("live-v").value=state.nominal.V;$("rc1").value=state.nominal.Rc1;$("rc2").value=state.nominal.Rc2;ids.forEach(id=>{$(`nom-i${id}`).value=state.nominal.curr[id];$(`target-${id}`).value=state.nominal.curr[id];$(`fixed-r${id}`).textContent=`${fmt(state.fixed[id],2)} Ω`;$(`system-r-${id}`).value=Number(state.fixed[id]).toFixed(2)});$("fixed-nodes").textContent=`${fmt(state.nominal.V1,2)} / ${fmt(state.nominal.V2,2)} V`;localStorage.setItem("anodeflex-2-ramas-1iny-fixed",JSON.stringify({fixed:state.fixed,stateNominal:state.nominal}));solve();return}}catch{}computeFixed(true)}
 
 let installPrompt=null;
 window.addEventListener("beforeinstallprompt",event=>{event.preventDefault();installPrompt=event;$("install-app").hidden=false});

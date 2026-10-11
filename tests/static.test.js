@@ -28,6 +28,9 @@ assert.ok(app.includes('>0.00 W</strong>'),"debe mostrar la potencia junto a Reo
 assert.ok(app.includes("value.toFixed(2)"),"la potencia debe mostrar dos decimales con punto");
 assert.ok(!app.includes("Corriente objetivo"),"debe eliminar el título anterior de corriente");
 assert.ok(!app.includes("Potencia del reóstato"),"debe eliminar la fila separada de potencia");
+assert.ok(app.includes('$("live-v").value=result.V'),"el ajuste debe aplicar la tensión mínima");
+assert.ok(html.includes("La aplicación obtiene el voltaje mínimo y los reóstatos."));
+for(const file of ["styles.css","model.js","app.js"])assert.ok(html.includes(`${file}?v=3`));
 assert.ok(css.includes(".more-actions{position:static;grid-column:1/-1;width:100%}"),"Más opciones debe desplegarse dentro del panel visible");
 const manifest=JSON.parse(fs.readFileSync(path.join(root,"manifest.webmanifest"),"utf8"));
 assert.equal(manifest.display,"standalone");

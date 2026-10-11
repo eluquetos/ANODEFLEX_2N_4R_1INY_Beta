@@ -6,8 +6,8 @@ Aplicación web instalable para dimensionar y regular cuatro ramas ANODEFLEX en 
 
 1. En **Mediciones**, ingrese el voltaje, Rc1, Rc2 y las cuatro corrientes medidas con los reóstatos en 0 Ω.
 2. Pulse **Calcular y fijar resistencias**. La aplicación calcula R11, R12, R21 y R22 y las conserva para las simulaciones.
-3. En **Regulación**, modifique el voltaje, los reóstatos o las corrientes objetivo. Los resultados se actualizan de inmediato.
-4. Pulse **Calcular ajuste de reóstatos** para obtener los valores que producen las corrientes objetivo. La aplicación avisa si el ajuste requiere una resistencia negativa o supera el máximo configurado.
+3. En **Regulación**, ingrese las corrientes objetivo.
+4. Pulse **Calcular ajuste de reóstatos**. La aplicación calcula la tensión mínima y los reóstatos, dejando al menos uno en 0 Ω.
 5. Revise las caídas, potencias y balances en **Verificación**.
 
 ## Instalación
