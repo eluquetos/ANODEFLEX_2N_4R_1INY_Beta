@@ -16,7 +16,7 @@ function buildBranches(){
     <article class="panel branch tone-${id}" data-id="${id}">
       <div class="branch-head"><div><span>NODO ${id[0]}</span><h3>RAMA ${id}</h3></div><div class="amp" id="amp-${id}">— A</div></div>
       <div class="branch-inputs">
-        <label><span class="input-title">Corriente</span><input id="target-${id}" type="number" min="0.001" step="0.01" value="${defaults[id]}"><em>A</em></label>
+        <label><span class="input-title">Corriente</span><input id="target-${id}" type="number" min="0.001" step="any" value="${defaults[id]}"><em>A</em></label>
         <label><span class="input-title"><span>Reo${id}</span><strong id="reo-power-${id}">0.00 W</strong></span><input id="reo-${id}" type="number" min="0" max="10000" step="0.01" value="0"><em>Ω</em></label>
       </div>
       <div class="fixed-note"><span>Resistencia del Sistema R${id}</span><label class="fixed-control"><input id="system-r-${id}" aria-label="Resistencia del Sistema R${id}" type="number" min="0.01" step="0.01"><em>Ω</em></label></div>
@@ -66,6 +66,13 @@ function render(){
   $("checks").innerHTML=Object.entries(errors).map(([label,value])=>`<p><span>${label}</span><b>${fmt(value,8)}</b></p>`).join("");
 }
 
+function applyCommonCurrent(){
+  const value=n("common-current"),message=$("common-current-message");
+  if(!Number.isFinite(value)||value<=0){message.textContent="Ingrese una corriente mayor que cero.";return}
+  ids.forEach(id=>$("target-"+id).value=value);
+  message.textContent="Corriente aplicada a las 4 ramas.";solve();
+}
+
 function setRheostat(id,value){$("reo-"+id).value=Math.round(Math.max(0,value)*1000)/1000}
 function assistedAdjustment(){
   if(!state.fixed){showMessage("Calibre primero las resistencias del sistema.","error");return}
@@ -91,7 +98,7 @@ function loadCase(file){
 
 function showMessage(text,type){const element=$("message");element.textContent=text;element.className="message show "+type}
 function wireEvents(){
-  $("calculate-fixed").addEventListener("click",computeFixed);$("live-v").addEventListener("input",solve);
+  $("calculate-fixed").addEventListener("click",computeFixed);$("apply-common-current").addEventListener("click",applyCommonCurrent);$("live-v").addEventListener("input",solve);
   ids.forEach(id=>{$("reo-"+id).addEventListener("input",solve);$("target-"+id).addEventListener("input",solve);$("system-r-"+id).addEventListener("input",solve)});
   $("reset-rheostats").addEventListener("click",()=>{ids.forEach(id=>setRheostat(id,0));solve()});$("assist").addEventListener("click",assistedAdjustment);$("tolerance").addEventListener("input",solve);$("save-case").addEventListener("click",saveCase);$("load-case").addEventListener("click",()=>$("case-file").click());$("case-file").addEventListener("change",event=>{if(event.target.files[0])loadCase(event.target.files[0]);event.target.value=""});$("print-report").addEventListener("click",()=>window.print());
 }

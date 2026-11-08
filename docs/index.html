@@ -9,7 +9,7 @@
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="apple-touch-icon" href="icon-192.svg">
-  <link rel="stylesheet" href="styles.css?v=4">
+  <link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
   <header class="topbar">
@@ -39,6 +39,11 @@
         <div class="section-title"><div class="step-label"><span class="step-number">2</span><span>REGULACIÓN</span></div><h2>Ajustar 4 corrientes</h2><p>Una sola inyección alimenta los 2 nodos desde el nodo 1. Ingrese las 4 corrientes objetivo; la aplicación calcula el voltaje mínimo y los reóstatos.</p></div>
         <div class="voltage-control"><label>Voltaje de trabajo<input id="live-v" type="number" min="0" max="1000" step="0.01" value="24"><em>V</em></label><output id="live-v-out">24,00 V</output></div>
       </div>
+      <div class="common-current">
+        <label>Corriente objetivo para todas las ramas<input id="common-current" type="number" min="0.001" step="any" inputmode="decimal" placeholder="Ej.: 0.325"><em>A</em></label>
+        <button class="secondary" id="apply-common-current" type="button">Aplicar a las 4 ramas</button>
+      </div>
+      <p id="common-current-message" class="common-current-message" role="status" aria-live="polite"></p>
       <div class="branches" id="branch-cards"></div>
       <div class="action-bar">
         <button class="primary" id="assist">Calcular ajuste de reóstatos</button>
@@ -67,6 +72,6 @@
       </details>
     </section>
   </main>
-  <script src="model.js?v=4"></script><script src="app.js?v=4"></script>
+  <script src="model.js?v=4"></script><script src="app.js?v=5"></script>
 </body>
 </html>

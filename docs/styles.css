@@ -233,6 +233,10 @@ button:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline
   font-weight:700;
   font-variant-numeric:tabular-nums;
 }
+.common-current{display:flex;align-items:end;gap:10px;margin-top:22px;flex-wrap:wrap}
+.common-current label{width:min(100%,280px)}
+.common-current-message{margin:8px 0 0;color:#d2d2d7;font-size:.875rem}
+.common-current-message:empty{display:none}
 .branches{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:22px}
 .branch{
   position:relative;
