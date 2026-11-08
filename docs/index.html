@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#05080d">
+  <meta name="description" content="Medición ANODEFLEX en dos grupos de tres nodos y regulación de 4 ramas con una inyección desde el nodo 1.">
+  <title>ANODEFLEX Beta · 2 nodos · 1 inyección</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="apple-touch-icon" href="icon-192.svg">
+  <link rel="stylesheet" href="styles.css?v=4">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><div class="brand-mark" aria-hidden="true">A</div><div><h1>ANODEFLEX</h1><p>2 nodos · 1 inyección · Beta</p></div></div>
+    <div class="system-state" aria-live="polite">
+      <div><span>Corriente total</span><strong id="head-current">— A</strong></div>
+      <div class="health"><i id="health-dot"></i><strong id="health-label">Sin calibrar</strong></div>
+    </div>
+  </header>
+
+  <main>
+    <section class="workflow-card" id="calibration">
+      <div class="section-title"><div class="step-label"><span class="step-number">1</span><span>MEDICIONES DE CAMPO</span></div><h2>Calcular resistencias del sistema</h2><p>Ingrese las tensiones medidas respecto a la misma referencia y las corrientes con los 4 reóstatos en 0 Ω.</p></div>
+      <div class="measurement-groups"><article class="measurement-card side-a"><div class="measurement-head"><div><span>MEDICIONES DE CAMPO</span><strong>Nodos 1, 2</strong></div><b>VA</b></div><div class="field-grid calibration-fields"><label>Voltaje VA<input id="nom-va" type="number" min="0.001" step="0.01" value="24"><em>V</em></label><label>Voltaje V1<input id="nom-v1" type="number" min="0.001" step="any" value="22.4"><em>V</em></label><label>Voltaje V2<input id="nom-v2" type="number" min="0.001" step="any" value="21.86"><em>V</em></label><label class="tone-11">Corriente I11<input id="nom-i11" type="number" min="0.001" step="0.01" value="1.2"><em>A</em></label><label class="tone-12">Corriente I12<input id="nom-i12" type="number" min="0.001" step="0.01" value="1"><em>A</em></label><label class="tone-21">Corriente I21<input id="nom-i21" type="number" min="0.001" step="0.01" value="0.9"><em>A</em></label><label class="tone-22">Corriente I22<input id="nom-i22" type="number" min="0.001" step="0.01" value="0.9"><em>A</em></label></div></article><input id="nom-vb" type="hidden" value="24"></div>
+      <div class="calibration-footer">
+        <div class="fixed-values" aria-live="polite">
+          <div><span>R11</span><strong id="fixed-r11">— Ω</strong></div><div><span>R12</span><strong id="fixed-r12">— Ω</strong></div><div><span>R21</span><strong id="fixed-r21">— Ω</strong></div><div><span>R22</span><strong id="fixed-r22">— Ω</strong></div>
+          <div><span>Rc1</span><strong id="cable-r1">— Ω</strong></div><div><span>Rc2</span><strong id="cable-r2">— Ω</strong></div><div class="nodes"><span>Tensiones de nodo</span><strong id="fixed-nodes">—</strong></div>
+        </div>
+        <button class="primary" id="calculate-fixed">Calcular resistencias</button>
+      </div>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="regulation" id="regulation">
+      <div class="regulation-head">
+        <div class="section-title"><div class="step-label"><span class="step-number">2</span><span>REGULACIÓN</span></div><h2>Ajustar 4 corrientes</h2><p>Una sola inyección alimenta los 2 nodos desde el nodo 1. Ingrese las 4 corrientes objetivo; la aplicación calcula el voltaje mínimo y los reóstatos.</p></div>
+        <div class="voltage-control"><label>Voltaje de trabajo<input id="live-v" type="number" min="0" max="1000" step="0.01" value="24"><em>V</em></label><output id="live-v-out">24,00 V</output></div>
+      </div>
+      <div class="branches" id="branch-cards"></div>
+      <div class="action-bar">
+        <button class="primary" id="assist">Calcular ajuste de reóstatos</button>
+        <button class="secondary" id="reset-rheostats">Poner reóstatos en 0 Ω</button>
+        <details class="more-actions"><summary>Más opciones</summary><div>
+          <label>Reóstato máximo<input id="reo-max" type="number" min="0.01" step="1" value="100"><em>Ω</em></label>
+          <label>Tolerancia<input id="tolerance" type="number" min="0.01" max="100" step="0.1" value="2"><em>%</em></label>
+          <button class="secondary" id="save-case">Exportar caso</button><button class="secondary" id="load-case">Importar caso</button>
+          <button class="secondary" id="print-report">Imprimir informe</button><button class="secondary" id="install-app" hidden>Instalar aplicación</button>
+        </div></details><input id="case-file" type="file" accept="application/json,.json" hidden>
+      </div>
+    </section>
+
+    <section class="summary-panel" id="results">
+      <div class="summary-title"><span>RESULTADO OPERATIVO</span><h2>Estado del circuito</h2></div>
+      <div class="result-grid">
+        <div><span>I total</span><strong id="res-it">— A</strong></div>
+        <div><span>I por Rc2</span><strong id="res-i2">— A</strong></div>
+        <div><span>Caída Rc1</span><strong id="res-dv1">— V</strong></div>
+        <div><span>Caída Rc2</span><strong id="res-dv2">— V</strong></div>
+      </div>
+      <details class="technical-details"><summary>Detalles eléctricos</summary>
+        <div class="power-row"><div><span>Potencia de la fuente</span><strong id="res-ps">— W</strong></div><div><span>Error de potencia</span><strong id="res-pe">— W</strong></div></div>
+        <div class="table-wrap"><table><thead><tr><th>Rama</th><th>Corriente</th><th>Objetivo</th><th>Desviación</th><th>R sistema</th><th>Reóstato</th><th>Potencia rama</th></tr></thead><tbody id="results-body"></tbody></table></div>
+        <div class="checks" id="checks"></div>
+      </details>
+    </section>
+  </main>
+  <script src="model.js?v=4"></script><script src="app.js?v=4"></script>
+</body>
+</html>

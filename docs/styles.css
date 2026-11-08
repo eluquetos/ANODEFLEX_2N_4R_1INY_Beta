@@ -126,7 +126,19 @@ main{
 .summary-title>span{color:var(--orange);font-size:.75rem;font-weight:700;letter-spacing:.08em}
 .summary-title h2{margin:4px 0 0;font-size:1.2rem;letter-spacing:-.02em}
 .field-grid{display:grid;gap:10px}
-.calibration-fields{grid-template-columns:repeat(7,1fr);margin-top:22px}
+.measurement-groups{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+.measurement-card{position:relative;padding:18px;border:1px solid #3a3a3c;border-radius:20px;background:#0a0a0a;overflow:hidden}
+.measurement-card::before{content:"";position:absolute;inset:0 0 auto;height:3px}
+.measurement-card.side-a::before{background:linear-gradient(90deg,var(--orange),var(--violet))}
+.measurement-card.side-b::before{background:linear-gradient(90deg,var(--blue),var(--cyan))}
+.measurement-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.measurement-head>div{display:grid;gap:2px}
+.measurement-head span{color:var(--text);font-size:.88rem;font-weight:750;letter-spacing:.02em}
+.measurement-head strong{color:var(--muted);font-size:.76rem;font-weight:600}
+.measurement-head>b{display:grid;place-items:center;width:38px;height:28px;border:1px solid var(--line);border-radius:999px;color:var(--orange);font-size:.76rem;background:#1c1c1e}
+.side-b .measurement-head>b{color:var(--cyan)}
+.calibration-fields{grid-template-columns:repeat(4,1fr);margin-top:15px}
+.calibration-fields label:first-child{grid-column:span 2}
 label{
   position:relative;
   display:grid;
@@ -148,7 +160,15 @@ label em{
 .tone-12{--accent:var(--red)}
 .tone-21{--accent:var(--violet)}
 .tone-22{--accent:var(--cyan)}
-.calibration-fields .tone-11,.calibration-fields .tone-12,.calibration-fields .tone-21,.calibration-fields .tone-22{color:var(--accent)}
+.tone-31{--accent:var(--blue)}
+.tone-32{--accent:var(--green)}
+.tone-41{--accent:var(--amber)}
+.tone-42{--accent:#ff6b9d}
+.tone-51{--accent:#eab308}
+.tone-52{--accent:#fb7185}
+.tone-61{--accent:#2dd4bf}
+.tone-62{--accent:#a78bfa}
+.calibration-fields .tone-11,.calibration-fields .tone-12,.calibration-fields .tone-21,.calibration-fields .tone-22,.calibration-fields .tone-31,.calibration-fields .tone-32,.calibration-fields .tone-41,.calibration-fields .tone-42,.calibration-fields .tone-51,.calibration-fields .tone-52,.calibration-fields .tone-61,.calibration-fields .tone-62{color:var(--accent)}
 input{
   width:100%;
   height:48px;
@@ -165,7 +185,8 @@ input{
 input:hover{background:#111}
 input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 4px #2997ff28}
 .calibration-footer{display:grid;grid-template-columns:1fr auto;align-items:end;gap:14px;margin-top:14px}
-.fixed-values{display:grid;grid-template-columns:repeat(4,1fr) 1.2fr;gap:8px}
+.fixed-values{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.fixed-values .nodes{grid-column:1/-1}
 .fixed-values>div,.result-grid>div,.power-row>div{
   display:grid;
   gap:4px;
@@ -196,7 +217,8 @@ button:focus-visible,summary:focus-visible{outline:3px solid var(--blue);outline
 .message.success{color:#bfffd1;background:#0b3818;border:1px solid #267b3c}
 .message.error{color:#ffd0d8;background:#3b0c14;border:1px solid #93283a}
 .regulation-head{display:flex;justify-content:space-between;align-items:center;gap:24px}
-.voltage-control{display:flex;align-items:flex-end;gap:10px}
+.voltage-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.voltage-control{display:flex;align-items:flex-end;gap:8px}
 .voltage-control label{width:155px}
 .voltage-control output{
   min-width:110px;
@@ -322,6 +344,7 @@ dialog h2{margin:0 0 8px;font-size:1.2rem}
 dialog p{color:var(--muted)}
 dialog form>div{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}
 @media(max-width:1050px){
+  .measurement-groups{grid-template-columns:1fr}
   .calibration-fields{grid-template-columns:repeat(4,1fr)}
   .branches{grid-template-columns:repeat(2,1fr)}
   .more-actions>div{width:100%;grid-template-columns:1fr 1fr}
@@ -340,6 +363,7 @@ dialog form>div{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}
   .fixed-values .nodes{grid-column:1/-1}
   .calibration-footer .primary{width:100%}
   .regulation-head{display:grid}
+  .voltage-controls{width:100%}
   .voltage-control{display:grid;grid-template-columns:1fr 105px}
   .voltage-control label{width:auto}
   .branches{grid-template-columns:1fr}
@@ -356,6 +380,8 @@ dialog form>div{display:flex;justify-content:flex-end;gap:8px;margin-top:22px}
 }
 @media(max-width:390px){
   .branch-inputs,.calibration-fields{grid-template-columns:1fr}
+  .calibration-fields label:first-child{grid-column:auto}
+  .voltage-controls{grid-template-columns:1fr}
   .step-label{font-size:1.35rem}
 }
 @media print{
